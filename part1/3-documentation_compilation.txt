@@ -1,0 +1,152 @@
+%% =====================
+%% HBnB Technical Diagrams
+%% Combined Mermaid.js File
+%% =====================
+
+%% 1. High-Level Package Diagram
+classDiagram
+    class PresentationLayer {
+        <<Package>>
+        +UserService
+        +PlaceService
+        +ReviewService
+        +AmenityService
+        +APIEndpoints
+    }
+
+    class BusinessLogicLayer {
+        <<Package>>
+        +User
+        +Place
+        +Review
+        +Amenity
+        +HBnBFacade
+    }
+
+    class PersistenceLayer {
+        <<Package>>
+        +UserRepository
+        +PlaceRepository
+        +ReviewRepository
+        +AmenityRepository
+        +DatabaseConnection
+    }
+
+    PresentationLayer --> BusinessLogicLayer : uses (via HBnBFacade)
+    BusinessLogicLayer --> PersistenceLayer : interacts with (CRUD operations)
+
+
+%% 2. Business Logic Layer Class Diagram
+classDiagram
+    class User {
+        +UUID id
+        +String name
+        +String email
+        +String password
+        +DateTime created_at
+        +DateTime updated_at
+        +register()
+        +login()
+        +updateProfile()
+    }
+
+    class Place {
+        +UUID id
+        +String name
+        +String description
+        +Float price_per_night
+        +int max_guest
+        +DateTime created_at
+        +DateTime updated_at
+        +addAmenity(amenity: Amenity)
+        +removeAmenity(amenity: Amenity)
+        +updateDetails()
+    }
+
+    class Review {
+        +UUID id
+        +String text
+        +int rating
+        +DateTime created_at
+        +DateTime updated_at
+        +editReview()
+    }
+
+    class Amenity {
+        +UUID id
+        +String name
+        +DateTime created_at
+        +DateTime updated_at
+        +updateAmenity()
+    }
+
+    User "1" -- "0..*" Place : owns
+    User "1" -- "0..*" Review : writes
+    Place "1" -- "0..*" Review : receives
+    Place "0..*" -- "0..*" Amenity : has
+
+
+%% 3. API Sequence Diagrams
+
+%% 3.1 User Registration
+sequenceDiagram
+    title User Registration
+    participant User
+    participant API as UserService/API
+    participant BL as BusinessLogic (HBnBFacade)
+    participant DB as UserRepository/Database
+
+    User->>API: POST /register (user data)
+    API->>BL: validateUserData(data)
+    BL->>DB: createUser(data)
+    DB-->>BL: return user_id
+    BL-->>API: registration success
+    API-->>User: 201 Created / Error
+
+
+%% 3.2 Place Creation
+sequenceDiagram
+    title Place Creation
+    participant User
+    participant API as PlaceService/API
+    participant BL as BusinessLogic (HBnBFacade)
+    participant DB as PlaceRepository/Database
+
+    User->>API: POST /places (place data)
+    API->>BL: validatePlaceData(data)
+    BL->>DB: createPlace(data)
+    DB-->>BL: return place_id
+    BL-->>API: place created
+    API-->>User: 201 Created / Error
+
+
+%% 3.3 Review Submission
+sequenceDiagram
+    title Review Submission
+    participant User
+    participant API as ReviewService/API
+    participant BL as BusinessLogic (HBnBFacade)
+    participant DB as ReviewRepository/Database
+
+    User->>API: POST /reviews (review data)
+    API->>BL: validateReview(data)
+    BL->>DB: saveReview(data)
+    DB-->>BL: review_id
+    BL-->>API: review submitted
+    API-->>User: 201 Created / Error
+
+
+%% 3.4 Fetching List of Places
+sequenceDiagram
+    title Fetching List of Places
+    participant User
+    participant API as PlaceService/API
+    participant BL as BusinessLogic (HBnBFacade)
+    participant DB as PlaceRepository/Database
+
+    User->>API: GET /places?filters
+    API->>BL: applyFilters(filters)
+    BL->>DB: fetchPlaces(filters)
+    DB-->>BL: list of places
+    BL-->>API: formatted list
+    API-->>User: 200 OK + data

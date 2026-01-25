@@ -1,0 +1,41 @@
+classDiagram
+%% =====================
+%% HBnB Three-Layer Architecture
+%% =====================
+
+%% Presentation Layer
+class PresentationLayer {
+    <<Package>>
+    +UserService
+    +PlaceService
+    +ReviewService
+    +AmenityService
+    +APIEndpoints
+}
+
+%% Business Logic Layer
+class BusinessLogicLayer {
+    <<Package>>
+    +User
+    +Place
+    +Review
+    +Amenity
+    +HBnBFacade
+}
+
+%% Persistence Layer
+class PersistenceLayer {
+    <<Package>>
+    +UserRepository
+    +PlaceRepository
+    +ReviewRepository
+    +AmenityRepository
+    +DatabaseConnection
+}
+
+%% Communication pathways
+PresentationLayer --> BusinessLogicLayer : uses (via HBnBFacade)
+BusinessLogicLayer --> PersistenceLayer : interacts with (CRUD operations)
+
+
+is this enough for this task?

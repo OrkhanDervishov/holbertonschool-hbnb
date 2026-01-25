@@ -1,0 +1,63 @@
+%% =====================
+%% HBnB API Sequence Diagrams
+%% =====================
+
+%% 1️ User Registration
+sequenceDiagram
+    title User Registration
+    participant User
+    participant API as UserService/API
+    participant BL as BusinessLogic (HBnBFacade)
+    participant DB as UserRepository/Database
+
+    User->>API: POST /register (user data)
+    API->>BL: validateUserData(data)
+    BL->>DB: createUser(data)
+    DB-->>BL: return user_id
+    BL-->>API: registration success
+    API-->>User: 201 Created / Error
+
+%% 2️ Place Creation
+sequenceDiagram
+    title Place Creation
+    participant User
+    participant API as PlaceService/API
+    participant BL as BusinessLogic (HBnBFacade)
+    participant DB as PlaceRepository/Database
+
+    User->>API: POST /places (place data)
+    API->>BL: validatePlaceData(data)
+    BL->>DB: createPlace(data)
+    DB-->>BL: return place_id
+    BL-->>API: place created
+    API-->>User: 201 Created / Error
+
+%% 3️ Review Submission
+sequenceDiagram
+    title Review Submission
+    participant User
+    participant API as ReviewService/API
+    participant BL as BusinessLogic (HBnBFacade)
+    participant DB as ReviewRepository/Database
+
+    User->>API: POST /reviews (review data)
+    API->>BL: validateReview(data)
+    BL->>DB: saveReview(data)
+    DB-->>BL: review_id
+    BL-->>API: review submitted
+    API-->>User: 201 Created / Error
+
+%% 4️ Fetching List of Places
+sequenceDiagram
+    title Fetching List of Places
+    participant User
+    participant API as PlaceService/API
+    participant BL as BusinessLogic (HBnBFacade)
+    participant DB as PlaceRepository/Database
+
+    User->>API: GET /places?filters
+    API->>BL: applyFilters(filters)
+    BL->>DB: fetchPlaces(filters)
+    DB-->>BL: list of places
+    BL-->>API: formatted list
+    API-->>User: 200 OK + data

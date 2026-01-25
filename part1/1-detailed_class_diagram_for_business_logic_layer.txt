@@ -1,0 +1,56 @@
+classDiagram
+%% =====================
+%% HBnB Business Logic Layer
+%% =====================
+
+%% User Entity
+class User {
+    +UUID id
+    +String name
+    +String email
+    +String password
+    +DateTime created_at
+    +DateTime updated_at
+    +register()
+    +login()
+    +updateProfile()
+}
+
+%% Place Entity
+class Place {
+    +UUID id
+    +String name
+    +String description
+    +Float price_per_night
+    +int max_guest
+    +DateTime created_at
+    +DateTime updated_at
+    +addAmenity(amenity: Amenity)
+    +removeAmenity(amenity: Amenity)
+    +updateDetails()
+}
+
+%% Review Entity
+class Review {
+    +UUID id
+    +String text
+    +int rating
+    +DateTime created_at
+    +DateTime updated_at
+    +editReview()
+}
+
+%% Amenity Entity
+class Amenity {
+    +UUID id
+    +String name
+    +DateTime created_at
+    +DateTime updated_at
+    +updateAmenity()
+}
+
+%% Relationships
+User "1" -- "0..*" Place : owns
+User "1" -- "0..*" Review : writes
+Place "1" -- "0..*" Review : receives
+Place "0..*" -- "0..*" Amenity : has
